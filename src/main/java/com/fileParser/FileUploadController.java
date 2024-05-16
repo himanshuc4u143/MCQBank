@@ -27,6 +27,8 @@ public class FileUploadController {
 	
 	private WordReaderService wordReaderService;
 	
+//	private WordReaderService1Impl wordReaderservice1Impl;
+	
 	public String wordDoc;
 	
 	public void insertDataIntoString(String data) {
@@ -58,11 +60,13 @@ public class FileUploadController {
             // Example processing: Log file name
             System.out.println("Uploaded file: " + tempFile.getName());
 
-            String wordDoc1 = wordReaderService.readWordDoc(file);
+//            String wordDoc1 = wordReaderService.readWordDoc(file);
+//          insertDataIntoString(wordDoc1);
+            
             insertDataIntoString(wordReaderService.readWordDoc(file));
+            
 //            System.out.println("Extracted to string: ");
 //            System.out.println(wordDoc1);
-            insertDataIntoString(wordDoc1);
             //Extract and print the contents of uploaded file
 //            extractedDocContents(tempFile);
             
@@ -76,11 +80,10 @@ public class FileUploadController {
         }
     }
 	
-//	private void extractedDocContents(File docFile) throws IOException, TikaE
 	
 	@GetMapping("/questions")
 	public ResponseEntity<Map<String, String>> parseQuestions(){
-		Map<String, String> parsedData = wordReaderService.parseQuestionsWithOptions(wordDoc);
+		Map<String, String> parsedData = wordReaderService.parseQuestionsWithOptionsMap(wordDoc);
 		for (Map.Entry<String, String> entry : parsedData.entrySet()) {
 		    String question = entry.getKey();
 		    String options = entry.getValue();
@@ -90,11 +93,37 @@ public class FileUploadController {
 //		    System.out.println(options);
 //		    System.out.println(); // Add an empty line between questions for better readability
 		}
-		System.out.println("headerText: ");
-		System.out.println(wordReaderService.headerText);
-		System.out.println("wordDoc: ");
-	    System.out.println(wordDoc);
-	    System.out.println(wordReaderService.extractLessonNameFromHeader(wordReaderService.headerText));
+//		System.out.println("headerText: ");
+//		System.out.println(wordReaderService.headerText);
+//		System.out.println("wordDoc: ");
+//	    System.out.println(wordDoc);
+	    //System.out.println(wordReaderService.extractLessonNumberFromHeader(wordReaderService.headerText));
+		return new ResponseEntity<>(parsedData, HttpStatus.OK);
+	}
+	
+	@GetMapping("/allQuestions")
+	public ResponseEntity<List<Question>> showAllQuestions(){
+		return new ResponseEntity<List<Question>>(wordReaderService.showAllQuestions(), HttpStatus.OK);
+	}
+	
+	@GetMapping("/questionsList")
+	public ResponseEntity<List<String[]>> parseQuestionsList(){
+		List<String[]> parsedData = wordReaderService.parseQuestionsWithOptionsList(wordDoc);
+		System.out.println();
+		System.out.println("In parseQuestionsList loop");
+		for(String[] data: parsedData) {
+			
+			String question = data[0];
+			String options = data[1];
+			
+//			System.out.println("Que: "+ question);
+//			System.out.println("Options: "+options);
+//			System.out.println();
+		}
+		
+//		wordReaderService.addQuesFromQuePaper(parsedData);
+		//System.out.println("Data added to DB");
+		
 		return new ResponseEntity<>(parsedData, HttpStatus.OK);
 	}
 	
